@@ -1,0 +1,22 @@
+{
+  "name": "shift-automation-tests",
+  "version": "1.0.0",
+  "description": "\"# shift-automation-tests\"",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jonasalobehaj18/shift-automation-tests.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jonasalobehaj18/shift-automation-tests/issues"
+  },
+  "homepage": "https://github.com/jonasalobehaj18/shift-automation-tests#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@types/node": "^25.5.0"
+  }
+}
