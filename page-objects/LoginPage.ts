@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { loginData } from '../../helper/loginData';
+import { loginData } from '../helper/loginData';
 
 type LoginParams = {
   username?: string;
