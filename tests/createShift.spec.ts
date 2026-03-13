@@ -15,11 +15,10 @@ test.beforeEach(async ({ page }) => {
 
   testData = generateFakeData();
   await page.getByTestId('defaultfields-btn').first().click();
+  await page.getByTestId('add-btn').click();
 });
 
 test('Create shift will all the required data', async ({ page }) => {
-  await page.getByTestId('add-btn').click();
-
   await page.locator('[data-testid="Name-textfield"] input').fill('test1');
   await page
     .locator('[data-testid="Description-textfield"] input')
@@ -62,4 +61,19 @@ test('Create shift will all the required data', async ({ page }) => {
 
   await page.waitForTimeout(2000);
   await expect(page.getByText('No entries found')).toBeVisible();
+});
+
+test('Add a new shift with empty fields', async ({ page }) => {
+  await page.waitForTimeout(1000);
+  await page.locator('button.v-btn.primary').nth(0).click();
+
+  await expect(
+    page.locator('[data-testid="Name-textfield"] .v-messages__message'),
+  ).toContainText('Field required');
+  await expect(
+    page.locator('[data-testid="Begin-timepicker"] .v-messages__message'),
+  ).toContainText('Field required');
+  await expect(
+    page.locator('[data-testid="End-timepicker"] .v-messages__message'),
+  ).toContainText('Field required');
 });
