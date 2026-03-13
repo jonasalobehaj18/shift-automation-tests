@@ -19,7 +19,9 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('Create shift will all the required data', async ({ page }) => {
-  await page.locator('[data-testid="Name-textfield"] input').fill('test1');
+  await page
+    .locator('[data-testid="Name-textfield"] input')
+    .fill(testData.shiftName);
   await page
     .locator('[data-testid="Description-textfield"] input')
     .fill('Description');
@@ -51,10 +53,10 @@ test('Create shift will all the required data', async ({ page }) => {
   await page
     .locator('.v-text-field__slot input')
     .last()
-    .pressSequentially('test1');
-  const rowLocator = page.locator('tbody tr:first-of-type:has-text("test1")');
+    .pressSequentially(testData.shiftName);
+
   await expect(
-    page.locator('tbody tr:first-of-type:has-text("test1")'),
+    page.locator(`tbody tr:first-of-type:has-text("${testData.shiftName}")`),
   ).toBeVisible();
   await page.locator('.v-input--selection-controls__ripple').nth(1).click();
   await page.locator('i.mdi-delete').click();

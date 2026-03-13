@@ -5,6 +5,7 @@ export type FakeData = {
   shiftType: string;
   resource: string;
   description: string;
+  shiftName: string;
 };
 
 export const generateFakeData = (): FakeData => {
@@ -13,5 +14,6 @@ export const generateFakeData = (): FakeData => {
     shiftType: 'Mittag-Schicht',
     resource: 'Holen',
     description: 'Test shift description',
+    shiftName: 'Test shift name',
   };
 };
