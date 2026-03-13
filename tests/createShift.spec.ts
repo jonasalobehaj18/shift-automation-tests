@@ -1,7 +1,8 @@
-import { test, Page, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import { LoginPage } from '../page-objects/LoginPage';
 import { navigateToShifts } from '../helper/navigationHelper';
 import { FakeData, generateFakeData } from '../helper/generateFakeDataHelper';
+import { ShiftFormPage } from '../page-objects/ShiftFormPage';
 
 let testData: FakeData;
 
@@ -14,68 +15,22 @@ test.beforeEach(async ({ page }) => {
   await navigateToShifts(page);
 
   testData = generateFakeData();
-  await page.getByTestId('defaultfields-btn').first().click();
-  await page.getByTestId('add-btn').click();
+  const shiftFormPage = new ShiftFormPage(page);
+  await shiftFormPage.openCreateShiftDialogFromTemplate();
 });
 
 test('Create shift will all the required data', async ({ page }) => {
-  await page
-    .locator('[data-testid="Name-textfield"] input')
-    .fill(testData.shiftName);
-  await page
-    .locator('[data-testid="Description-textfield"] input')
-    .fill('Description');
-  await page.getByTestId('Begin-timepicker').first().click();
-  await page.getByRole('option', { name: '07:00' }).click();
-
-  await page.getByTestId('End-timepicker').first().click();
-  await page.getByRole('option', { name: '17:00' }).click();
-
-  // add pause
-  await page.getByTestId('add-btn').click();
-
-  await page
-    .getByRole('dialog')
-    .getByTestId('Begin-timepicker')
-    .first()
-    .click();
-  await page.getByRole('option', { name: '07:15' }).click();
-
-  await page.getByRole('dialog').getByTestId('End-timepicker').first().click();
-  await page.getByRole('option', { name: '07:30' }).click();
-
-  await page.locator('.v-card').getByRole('button').last().click();
-
-  await page.locator('button.v-btn.primary').nth(0).click();
-  await page.waitForTimeout(3000);
-
-  // assertions
-  await page
-    .locator('.v-text-field__slot input')
-    .last()
-    .pressSequentially(testData.shiftName);
-
-  await expect(
-    page.locator(`tbody tr:first-of-type:has-text("${testData.shiftName}")`),
-  ).toBeVisible();
-  await page.locator('.v-input--selection-controls__ripple').nth(1).click();
-  await page.locator('i.mdi-delete').click();
-
-  await page.waitForTimeout(2000);
-  await expect(page.getByText('No entries found')).toBeVisible();
+  const shiftFormPage = new ShiftFormPage(page);
+  await shiftFormPage.fillRequiredTemplateFields(testData.shiftName);
+  await shiftFormPage.setTemplateMainTimes('07:00', '17:00');
+  await shiftFormPage.addPause('07:15', '07:30');
+  await shiftFormPage.saveTemplateShiftAndWait();
+  await shiftFormPage.assertTemplateShiftCreated(testData.shiftName);
+  await shiftFormPage.deleteFirstTemplateShiftAndConfirmRemoval();
 });
 
 test('Add a new shift with empty fields', async ({ page }) => {
-  await page.waitForTimeout(1000);
-  await page.locator('button.v-btn.primary').nth(0).click();
-
-  await expect(
-    page.locator('[data-testid="Name-textfield"] .v-messages__message'),
-  ).toContainText('Field required');
-  await expect(
-    page.locator('[data-testid="Begin-timepicker"] .v-messages__message'),
-  ).toContainText('Field required');
-  await expect(
-    page.locator('[data-testid="End-timepicker"] .v-messages__message'),
-  ).toContainText('Field required');
+  const shiftFormPage = new ShiftFormPage(page);
+  await shiftFormPage.trySaveWithEmptyFields();
+  await shiftFormPage.assertRequiredFieldErrors();
 });
